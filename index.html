@@ -396,33 +396,46 @@
             // XML到OAI配置轉換函數
             function convertToOAI(xmlContent) {
                 // 提取關鍵參數
-                const phyCellId = extractValue(xmlContent, 'PhyCellID') || '186';
-                const freqBand = extractValue(xmlContent, 'FreqBandIndicator') || '78';
+                const phyCellId = extractValue(xmlContent, 'PhyCellID') || '30';
+                const freqBand = extractValue(xmlContent, 'FreqBandIndicator') || '79';
+                const nrarfcnDl = extractValue(xmlContent, 'NRARFCNDL') || '723324';
+                const nrarfcnUl = extractValue(xmlContent, 'NRARFCNUL') || '723324';
+                
+                // 提取頻率相關參數
+                const absoluteFrequencyPointA = extractValue(xmlContent, 'AbsoluteFrequencyPointA') || '720048';
                 const ssbPower = extractValue(xmlContent, 'SsPBCHBlockPower') || '-35';
-                const dlBandwidth = extractValue(xmlContent, 'DLBandwidth') || '100';
-                const ulBandwidth = extractValue(xmlContent, 'ULBandwidth') || '100';
-                const nrarfcnDl = extractValue(xmlContent, 'NRARFCNDL') || '647484';
-                const nrarfcnUl = extractValue(xmlContent, 'NRARFCNUL') || '647484';
                 
-                // 提取TDD配置參數
-                const referenceSubcarrierSpacing = extractValue(xmlContent, 'ReferenceSubcarrierSpacing') || '1';
-                const dlUlTransmissionPeriodicity = extractValue(xmlContent, 'DlULTransmissionPeriodicity') || '5';
-                const nrofDownlinkSlots = extractValue(xmlContent, 'NrofDownlinkSlots') || '3';
-                const nrofDownlinkSymbols = extractValue(xmlContent, 'NrofDownlinkSymbols') || '10';
-                const nrofUplinkSlots = extractValue(xmlContent, 'NrofUplinkSlots') || '1';
-                const nrofUplinkSymbols = extractValue(xmlContent, 'NrofUplinkSymbols') || '2';
-                
-                // 提取pattern2參數
-                const dlUlTransmissionPeriodicity2 = extractValueFromPattern(xmlContent, 'pattern2', 'DlULTransmissionPeriodicity') || '5';
-                const nrofDownlinkSlots2 = extractValueFromPattern(xmlContent, 'pattern2', 'NrofDownlinkSlots') || '2';
-                const nrofDownlinkSymbols2 = extractValueFromPattern(xmlContent, 'pattern2', 'NrofDownlinkSymbols') || '10';
-                const nrofUplinkSlots2 = extractValueFromPattern(xmlContent, 'pattern2', 'NrofUplinkSlots') || '2';
-                const nrofUplinkSymbols2 = extractValueFromPattern(xmlContent, 'pattern2', 'NrofUplinkSymbols') || '2';
+                // 提取TDD配置參數 - 使用改進的解析方法
+                const tddParams = extractTddParameters(xmlContent);
                 
                 // 提取SSB相關參數
-                const absoluteFrequencyPointA = extractValue(xmlContent, 'AbsoluteFrequencyPointA') || '644208';
                 const ssbPositionsInBurst = extractValue(xmlContent, 'InOneGroup') || '8';
                 const ssbPeriodicityServingCell = extractValue(xmlContent, 'SsbPeriodicityServingCell') || '3';
+                
+                // 提取PDCCH配置參數
+                const controlResourceSetZero = extractValue(xmlContent, 'ControlResourceSetZero') || '10';
+                const pdcchConfigSIB1 = extractValue(xmlContent, 'PdcchConfigSIB1') || '160';
+                
+                // 提取PRACH配置參數
+                const preambleTransMax = extractValue(xmlContent, 'PreambleTransMax') || '3';
+                const prachConfigurationIndex = extractValue(xmlContent, 'PrachConfigurationIndex') || '147';
+                const p0NominalWithGrant = extractValue(xmlContent, 'P0NominalWithGrant') || '-96';
+                const msg3Alpha = extractValue(xmlContent, 'Msg3Alpha') || 'alpha0';
+                
+                // 提取MAC層參數
+                const srPeriod = extractValue(xmlContent, 'SrPeriod') || '20';
+                const layerOneEntryMcs = extractValue(xmlContent, 'LayerOneEntryMcs') || '7';
+                const layerOneLeaveMcs = extractValue(xmlContent, 'LayerOneLeaveMcs') || '17';
+                const layerTwoEntryMcs = extractValue(xmlContent, 'LayerTwoEntryMcs') || '10';
+                const layerTwoLeaveMcs = extractValue(xmlContent, 'LayerTwoLeaveMcs') || '9';
+                
+                // 提取聚合級別參數
+                const aggregationLevel4 = extractValue(xmlContent, 'AggregationLevel4') || '4';
+                const aggregationLevel8 = extractValue(xmlContent, 'AggregationLevel8') || '2';
+                const aggregationLevel16 = extractValue(xmlContent, 'AggregationLevel16') || '1';
+                
+                // 提取定時器參數
+                const ueInactiveTimer = extractValue(xmlContent, 'UeInactiveTimer') || '30';
                 
                 // 計算SSB頻率（基於NRARFCN和頻段）
                 let absoluteFrequencySSB;
@@ -432,14 +445,24 @@
                     absoluteFrequencySSB = '644736'; // 預設值，對應頻段78
                 }
                 
-                // 根據頻段調整其他參數
-                let bandsValue = '[78]';
-                if (freqBand === '79') {
-                    bandsValue = '[79]';
+                // 根據頻段調整參數
+                let bandsValue = '[79]';
+                if (freqBand === '78') {
+                    bandsValue = '[78]';
+                }
+                
+                // 根據NRARFCN判斷配置類型
+                let configType = '文件2配置';
+                if (nrarfcnDl === '647484') {
+                    configType = '文件1配置';
                 }
                 
                 // 生成OAI配置
-                return `Active_gNBs = ( "du-rfsim");
+                return `# OAI配置文件 - ${configType}
+# 生成時間: ${new Date().toISOString()}
+# 源參數: NRARFCNDL=${nrarfcnDl}, PhyCellID=${phyCellId}, 頻段=${freqBand}
+
+Active_gNBs = ( "du-rfsim");
 # Asn1_verbosity, choice in: none, info, annoying
 Asn1_verbosity = "none";
 
@@ -483,12 +506,12 @@ gNBs =
      #initialDownlinkBWP
       #genericParameters
         # this is RBstart=27,L=48 (275*(L-1))+RBstart
-        initialDLBWPlocationAndBandwidth                         = 1099; # 6366 12925 12956 28875 12952
+        initialDLBWPlocationAndBandwidth                         = 1099;
 # subcarrierSpacing
 # 0=kHz15, 1=kHz30, 2=kHz60, 3=kHz120
         initialDLBWPsubcarrierSpacing                             = 1;
       #pdcch-ConfigCommon
-        initialDLBWPcontrolResourceSetZero                        = 10;
+        initialDLBWPcontrolResourceSetZero                        = ${controlResourceSetZero};
         initialDLBWPsearchSpaceZero                               = 0;
 
   #uplinkConfigCommon
@@ -509,7 +532,7 @@ gNBs =
         initialULBWPsubcarrierSpacing                              = 1;
       #rach-ConfigCommon
         #rach-ConfigGeneric
-          prach_ConfigurationIndex                                 = 147;
+          prach_ConfigurationIndex                                 = ${prachConfigurationIndex};
 #prach_msg1_FDM
 #0 = one, 1=two, 2=four, 3=eight
           prach_msg1_FDM                                           = 0;
@@ -517,7 +540,7 @@ gNBs =
           zeroCorrelationZoneConfig                                = 10;
           preambleReceivedTargetPower                              = -90;
 #preamblTransMax (0...10) = (3,4,5,6,7,8,10,20,50,100,200)
-          preambleTransMax                                         = 3;
+          preambleTransMax                                         = ${preambleTransMax};
 #powerRampingStep
 # 0=dB0,1=dB2,2=dB4,3=dB6
         powerRampingStep                                           = 2;
@@ -542,7 +565,8 @@ gNBs =
         restrictedSetConfig                                        = 0,
 
         msg3_DeltaPreamble                                         = 0;
-        p0_NominalWithGrant                                        =-96;
+        p0_NominalWithGrant                                        = ${p0NominalWithGrant};
+        msg3_Alpha                                                 = ${msg3Alpha};
 
 # pucch-ConfigCommon setup :
 # pucchGroupHopping
@@ -568,25 +592,25 @@ gNBs =
   #tdd-UL-DL-ConfigurationCommon
 # subcarrierSpacing
 # 0=kHz15, 1=kHz30, 2=kHz60, 3=kHz120
-      referenceSubcarrierSpacing                                   = ${referenceSubcarrierSpacing};
+      referenceSubcarrierSpacing                                   = 1;
 
       # pattern1
       # dl_UL_TransmissionPeriodicity
       # 0=ms0p5, 1=ms0p625, 2=ms1, 3=ms1p25, 4=ms2, 5=ms2p5, 6=ms5, 7=ms10
       # ext: 8=ms3, 9=ms4
-      dl_UL_TransmissionPeriodicity                                = ${convertDlUlPeriodicity(dlUlTransmissionPeriodicity)};
-      nrofDownlinkSlots                                            = ${nrofDownlinkSlots};
-      nrofDownlinkSymbols                                          = ${nrofDownlinkSymbols};
-      nrofUplinkSlots                                              = ${nrofUplinkSlots};
-      nrofUplinkSymbols                                            = ${nrofUplinkSymbols};
+      dl_UL_TransmissionPeriodicity                                = ${tddParams.pattern1.dlUlPeriodicity};
+      nrofDownlinkSlots                                            = ${tddParams.pattern1.nrofDownlinkSlots};
+      nrofDownlinkSymbols                                          = ${tddParams.pattern1.nrofDownlinkSymbols};
+      nrofUplinkSlots                                              = ${tddParams.pattern1.nrofUplinkSlots};
+      nrofUplinkSymbols                                            = ${tddParams.pattern1.nrofUplinkSymbols};
 
       # pattern2
       pattern2: {
-        dl_UL_TransmissionPeriodicity2                             = ${convertDlUlPeriodicity(dlUlTransmissionPeriodicity2)};
-        nrofDownlinkSlots2                                         = ${nrofDownlinkSlots2};
-        nrofDownlinkSymbols2                                       = ${nrofDownlinkSymbols2};
-        nrofUplinkSlots2                                           = ${nrofUplinkSlots2};
-        nrofUplinkSymbols2                                         = ${nrofUplinkSymbols2};
+        dl_UL_TransmissionPeriodicity2                             = ${tddParams.pattern2.dlUlPeriodicity};
+        nrofDownlinkSlots2                                         = ${tddParams.pattern2.nrofDownlinkSlots};
+        nrofDownlinkSymbols2                                       = ${tddParams.pattern2.nrofDownlinkSymbols};
+        nrofUplinkSlots2                                           = ${tddParams.pattern2.nrofUplinkSlots};
+        nrofUplinkSymbols2                                         = ${tddParams.pattern2.nrofUplinkSymbols};
       };
 
       ssPBCH_BlockPower                                            = ${ssbPower};
@@ -613,6 +637,18 @@ MACRLCs = ({
     local_n_portd       = 2152;
     remote_n_portd      = 2152;
     pusch_FailureThres  = 1000;
+    
+    # MAC層參數
+    sr_Period           = ${srPeriod};
+    layerOne_EntryMcs   = ${layerOneEntryMcs};
+    layerOne_LeaveMcs   = ${layerOneLeaveMcs};
+    layerTwo_EntryMcs   = ${layerTwoEntryMcs};
+    layerTwo_LeaveMcs   = ${layerTwoLeaveMcs};
+    
+    # 聚合級別配置
+    aggregation_Level4  = ${aggregationLevel4};
+    aggregation_Level8  = ${aggregationLevel8};
+    aggregation_Level16 = ${aggregationLevel16};
 });
 
 L1s = ({
@@ -650,10 +686,15 @@ log_config: {
   nr_phy_log_level = "info";
   nr_mac_log_level = "info";
   rlc_log_level    = "info";
-  pdcp_log_level   = "info";
+  pdcch_log_level  = "info";
   rrc_log_level    = "info";
   f1ap_log_level   = "info";
   ngap_log_level   = "debug";
+};
+
+# 定時器配置
+timer_config: {
+  ue_inactive_timer = ${ueInactiveTimer};
 };
 
 e2_agent = {
@@ -664,22 +705,65 @@ e2_agent = {
             
             // 從XML內容中提取值的輔助函數
             function extractValue(xmlContent, tagName) {
-                const regex = new RegExp(`<${tagName}>(.*?)</${tagName}>`);
-                const match = xmlContent.match(regex);
-                return match ? match[1] : null;
+                // 移除可能的命名空間前綴
+                const cleanContent = xmlContent.replace(/xsi:nil="true"/g, '');
+                const regex = new RegExp(`<${tagName}>([^<]*)</${tagName}>`, 'i');
+                const match = cleanContent.match(regex);
+                return match ? match[1].trim() : null;
             }
             
-            // 從特定pattern中提取值的輔助函數
-            function extractValueFromPattern(xmlContent, patternName, tagName) {
-                const patternRegex = new RegExp(`<${patternName}>([\\s\\S]*?)</${patternName}>`);
-                const patternMatch = xmlContent.match(patternRegex);
-                if (patternMatch) {
-                    const patternContent = patternMatch[1];
-                    const valueRegex = new RegExp(`<${tagName}>(.*?)</${tagName}>`);
-                    const valueMatch = patternContent.match(valueRegex);
-                    return valueMatch ? valueMatch[1] : null;
+            // 提取TDD參數的改進函數
+            function extractTddParameters(xmlContent) {
+                // 默認值
+                const defaultParams = {
+                    pattern1: {
+                        dlUlPeriodicity: '8',
+                        nrofDownlinkSlots: '3',
+                        nrofDownlinkSymbols: '6',
+                        nrofUplinkSlots: '2',
+                        nrofUplinkSymbols: '4'
+                    },
+                    pattern2: {
+                        dlUlPeriodicity: '4',
+                        nrofDownlinkSlots: '4',
+                        nrofDownlinkSymbols: '0',
+                        nrofUplinkSlots: '0',
+                        nrofUplinkSymbols: '0'
+                    }
+                };
+                
+                // 首先嘗試從pattern1和pattern2中提取
+                const pattern1Content = extractPatternContent(xmlContent, 'pattern1');
+                const pattern2Content = extractPatternContent(xmlContent, 'pattern2');
+                
+                if (pattern1Content) {
+                    defaultParams.pattern1.dlUlPeriodicity = extractValue(pattern1Content, 'DlULTransmissionPeriodicity') || defaultParams.pattern1.dlUlPeriodicity;
+                    defaultParams.pattern1.nrofDownlinkSlots = extractValue(pattern1Content, 'NrofDownlinkSlots') || defaultParams.pattern1.nrofDownlinkSlots;
+                    defaultParams.pattern1.nrofDownlinkSymbols = extractValue(pattern1Content, 'NrofDownlinkSymbols') || defaultParams.pattern1.nrofDownlinkSymbols;
+                    defaultParams.pattern1.nrofUplinkSlots = extractValue(pattern1Content, 'NrofUplinkSlots') || defaultParams.pattern1.nrofUplinkSlots;
+                    defaultParams.pattern1.nrofUplinkSymbols = extractValue(pattern1Content, 'NrofUplinkSymbols') || defaultParams.pattern1.nrofUplinkSymbols;
                 }
-                return null;
+                
+                if (pattern2Content) {
+                    defaultParams.pattern2.dlUlPeriodicity = extractValue(pattern2Content, 'DlULTransmissionPeriodicity') || defaultParams.pattern2.dlUlPeriodicity;
+                    defaultParams.pattern2.nrofDownlinkSlots = extractValue(pattern2Content, 'NrofDownlinkSlots') || defaultParams.pattern2.nrofDownlinkSlots;
+                    defaultParams.pattern2.nrofDownlinkSymbols = extractValue(pattern2Content, 'NrofDownlinkSymbols') || defaultParams.pattern2.nrofDownlinkSymbols;
+                    defaultParams.pattern2.nrofUplinkSlots = extractValue(pattern2Content, 'NrofUplinkSlots') || defaultParams.pattern2.nrofUplinkSlots;
+                    defaultParams.pattern2.nrofUplinkSymbols = extractValue(pattern2Content, 'NrofUplinkSymbols') || defaultParams.pattern2.nrofUplinkSymbols;
+                }
+                
+                // 轉換週期性參數
+                defaultParams.pattern1.dlUlPeriodicity = convertDlUlPeriodicity(defaultParams.pattern1.dlUlPeriodicity);
+                defaultParams.pattern2.dlUlPeriodicity = convertDlUlPeriodicity(defaultParams.pattern2.dlUlPeriodicity);
+                
+                return defaultParams;
+            }
+            
+            // 提取pattern內容的輔助函數
+            function extractPatternContent(xmlContent, patternName) {
+                const regex = new RegExp(`<${patternName}>([\\s\\S]*?)</${patternName}>`, 'i');
+                const match = xmlContent.match(regex);
+                return match ? match[1] : null;
             }
             
             // 計算SSB點陣圖的輔助函數

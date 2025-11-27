@@ -3,58 +3,15 @@ online calculator: https://dustinchen26.github.io/confdb_v2.xml_To_OAI_conf
 
 ## Example
 ```
-【Upload or Paste confdb_v2.xml】
-            <RF>
+【Input】Upload or Paste confdb_v2.xml
+confdb_v2_Cedar_n78.xml
+confdb_v2_Sharp_n79.xml
+...
               <NRARFCNDL>647484</NRARFCNDL>
               <PhyCellID>186</PhyCellID>
-              <DLBandwidth>100</DLBandwidth>
-              <ULBandwidth>100</ULBandwidth>
-              <PSCHPowerOffset>db0</PSCHPowerOffset>
               <NRARFCNUL>647484</NRARFCNUL>
               <FreqBandIndicator>78</FreqBandIndicator>
-              <SsPBCHBlockPower>-35</SsPBCHBlockPower>
-              <ForgetFactorRbNoise>8</ForgetFactorRbNoise>
-              <SsbFrequency xsi:nil="true"/>
-              <gNBDUId xsi:nil="true"/>
-              <DigitalBeamFormingMode>false</DigitalBeamFormingMode>
-              <AnalogBeamformingMode>false</AnalogBeamformingMode>
-              <BandwidthAutoConfig>false</BandwidthAutoConfig>
-            </RF>
-            <PHY>
-              <FrequencyInfoDLSIB>
-                <OffsetToPointA>5</OffsetToPointA>
-                <MultiFrequencyBandListNRSIB id="1">
-                  <FreqBandIndicatorNR>12</FreqBandIndicatorNR>
-                </MultiFrequencyBandListNRSIB>
-                <ScsSpecificCarrierList id="1">
-                  <SCSSpecificCarrier>
-                    <OffsetToCarrier>0</OffsetToCarrier>
-                    <SubcarrierSpacing>1</SubcarrierSpacing>
-                    <CarrierBandwidth>273</CarrierBandwidth>
-                  </SCSSpecificCarrier>
-                </ScsSpecificCarrierList>
-              </FrequencyInfoDLSIB>
-              <FrequencyInfoULSIB>
                 <AbsoluteFrequencyPointA>644208</AbsoluteFrequencyPointA>
-                <ScsSpecificCarrierList id="1">
-                  <SCSSpecificCarrier>
-                    <OffsetToCarrier>0</OffsetToCarrier>
-                    <SubcarrierSpacing>1</SubcarrierSpacing>
-                    <CarrierBandwidth>273</CarrierBandwidth>
-                  </SCSSpecificCarrier>
-                </ScsSpecificCarrierList>
-                <IsPMaxPresent>true</IsPMaxPresent>
-                <Pmax>23</Pmax>
-              </FrequencyInfoULSIB>
-              <SSB>
-                <SsbPositionsInBurst>
-                  <InOneGroup>8</InOneGroup>
-                </SsbPositionsInBurst>
-                <SsbPeriodicityServingCell>3</SsbPeriodicityServingCell>
-                <SsPBCHBlockPower>-36</SsPBCHBlockPower>
-                <SsbSubcarrierOffset>9</SsbSubcarrierOffset>
-              </SSB>
-              <SubCarrierSpacingCommon>scs30or120</SubCarrierSpacingCommon>
               <TddULDLConfigurationCommon>
                 <ReferenceSubcarrierSpacing>1</ReferenceSubcarrierSpacing>
                 <IsPattern2Present>true</IsPattern2Present>
@@ -72,9 +29,24 @@ online calculator: https://dustinchen26.github.io/confdb_v2.xml_To_OAI_conf
                   <NrofUplinkSlots>2</NrofUplinkSlots>
                   <NrofUplinkSymbols>2</NrofUplinkSymbols>
                 </pattern2>
-              </TddULDLConfigurationCommon>
-
-【Output OAI conf】
+                    <AggregationLevel4>4</AggregationLevel4>
+                    <AggregationLevel8>2</AggregationLevel8>
+                    <AggregationLevel16>1</AggregationLevel16>
+                    <SrPeriod>20</SrPeriod>
+                    <LayerOneEntryMcs>7</LayerOneEntryMcs>
+                    <LayerOneLeaveMcs>17</LayerOneLeaveMcs>
+                    <LayerTwoEntryMcs>10</LayerTwoEntryMcs>
+                    <LayerTwoLeaveMcs>9</LayerTwoLeaveMcs>
+                  <AbsoluteFrequencySSB>644736</AbsoluteFrequencySSB>
+                <PdcchConfigSIB1>160</PdcchConfigSIB1>
+                      <ControlResourceSetZero>10</ControlResourceSetZero>
+                    <PreambleTransMax>3</PreambleTransMax>
+                    <PrachConfigurationIndex>147</PrachConfigurationIndex>
+                    <P0NominalWithGrant>-96</P0NominalWithGrant>
+                    <Msg3Alpha>alpha0</Msg3Alpha>
+            <UeInactiveTimer>30</UeInactiveTimer>
+			
+【Output】OAI conf
 Active_gNBs = ( "du-rfsim");
 # Asn1_verbosity, choice in: none, info, annoying
 Asn1_verbosity = "none";
