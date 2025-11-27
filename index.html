@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基站配置轉換工具</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 20px;
+        }
+        
+        .input-section, .output-section {
+            flex: 1;
+            min-width: 300px;
+            padding: 20px;
+        }
+        
+        .input-section {
+            border-right: 1px solid #eaeaea;
+        }
+        
+        h2 {
+            color: #2a5298;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eaeaea;
+        }
+        
+        .upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+            background-color: #f9f9f9;
+        }
+        
+        .upload-area:hover {
+            border-color: #2a5298;
+            background-color: #f0f5ff;
+        }
+        
+        .upload-area i {
+            font-size: 48px;
+            color: #2a5298;
+            margin-bottom: 15px;
+        }
+        
+        .upload-text {
+            margin-bottom: 15px;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: #2a5298;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+        
+        .btn:hover {
+            background: #1e3c72;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 300px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 14px;
+            resize: vertical;
+            margin-bottom: 15px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .output-area {
+            position: relative;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(42, 82, 152, 0.8);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .copy-btn:hover {
+            background: #2a5298;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+            font-size: 0.9rem;
+            border-top: 1px solid #eaeaea;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                flex-direction: column;
+            }
+            
+            .input-section {
+                border-right: none;
+                border-bottom: 1px solid #eaeaea;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>基站配置轉換工具</h1>
+            <p class="subtitle">將XML基站配置轉換為OAI設定檔格式</p>
+        </header>
+        
+        <div class="content">
+            <div class="input-section">
+                <h2>輸入配置</h2>
+                
+                <div class="upload-area" id="uploadArea">
+                    <i>📁</i>
+                    <p class="upload-text">拖放設定檔到這裡，或點擊上傳</p>
+                    <input type="file" id="fileInput" accept=".txt,.xml,.conf" style="display: none;">
+                    <button class="btn" id="uploadBtn">選擇檔</button>
+                </div>
+                
+                <p>或者直接在下方輸入配置內容：</p>
+                <textarea id="inputText" placeholder="粘貼您的XML配置內容到這裡..."></textarea>
+                
+                <div class="button-group">
+                    <button class="btn" id="convertBtn">轉換為OAI格式</button>
+                    <button class="btn btn-secondary" id="clearBtn">清除內容</button>
+                </div>
+            </div>
+            
+            <div class="output-section">
+                <h2>輸出結果 (OAI格式)</h2>
+                <div class="output-area">
+                    <textarea id="outputText" placeholder="轉換後的OAI配置將顯示在這裡..." readonly></textarea>
+                    <button class="copy-btn" id="copyBtn">複製</button>
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn" id="downloadBtn">下載設定檔</button>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>基站配置轉換工具 &copy; 2023 | 支援XML到OAI配置格式轉換</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('fileInput');
+            const uploadBtn = document.getElementById('uploadBtn');
+            const uploadArea = document.getElementById('uploadArea');
+            const inputText = document.getElementById('inputText');
+            const outputText = document.getElementById('outputText');
+            const convertBtn = document.getElementById('convertBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const copyBtn = document.getElementById('copyBtn');
+            const downloadBtn = document.getElementById('downloadBtn');
+            
+            // 設置預設內容
+            inputText.value = `            <RF>
+              <NRARFCNDL>723324</NRARFCNDL>
+              <PhyCellID>30</PhyCellID>
+              <DLBandwidth>100</DLBandwidth>
+              <ULBandwidth>100</ULBandwidth>
+              <PSCHPowerOffset>db0</PSCHPowerOffset>
+              <NRARFCNUL>723324</NRARFCNUL>
+              <FreqBandIndicator>79</FreqBandIndicator>
+              <SsPBCHBlockPower>-35</SsPBCHBlockPower>
+              <ForgetFactorRbNoise>8</ForgetFactorRbNoise>
+              <SsbFrequency xsi:nil="true"/>
+              <gNBDUId xsi:nil="true"/>
+              <DigitalBeamFormingMode>false</DigitalBeamFormingMode>
+              <AnalogBeamformingMode>false</AnalogBeamformingMode>
+              <BandwidthAutoConfig>false</BandwidthAutoConfig>
+            </RF>
+            <PHY>
+              <FrequencyInfoDLSIB>
+                <OffsetToPointA>5</OffsetToPointA>
+                <MultiFrequencyBandListNRSIB id="1">
+                  <FreqBandIndicatorNR>12</FreqBandIndicatorNR>
+                </MultiFrequencyBandListNRSIB>
+                <ScsSpecificCarrierList id="1">
+                  <SCSSpecificCarrier>
+                    <OffsetToCarrier>0</OffsetToCarrier>
+                    <SubcarrierSpacing>1</SubcarrierSpacing>
+                    <CarrierBandwidth>273</CarrierBandwidth>
+                  </SCSSpecificCarrier>
+                </ScsSpecificCarrierList>
+              </FrequencyInfoDLSIB>
+              <FrequencyInfoULSIB>
+                <AbsoluteFrequencyPointA>720048</AbsoluteFrequencyPointA>
+                <ScsSpecificCarrierList id="1">
+                  <SCSSpecificCarrier>
+                    <OffsetToCarrier>0</OffsetToCarrier>
+                    <SubcarrierSpacing>1</SubcarrierSpacing>
+                    <CarrierBandwidth>273</CarrierBandwidth>
+                  </SCSSpecificCarrier>
+                </ScsSpecificCarrierList>
+                <IsPMaxPresent>true</IsPMaxPresent>
+                <Pmax>23</Pmax>
+              </FrequencyInfoULSIB>
+              <SSB>
+                <SsbPositionsInBurst>
+                  <InOneGroup>8</InOneGroup>
+                </SsbPositionsInBurst>
+                <SsbPeriodicityServingCell>3</SsbPeriodicityServingCell>
+                <SsPBCHBlockPower>-36</SsPBCHBlockPower>
+                <SsbSubcarrierOffset>9</SsbSubcarrierOffset>
+              </SSB>
+              <SubCarrierSpacingCommon>scs30or120</SubCarrierSpacingCommon>
+              <TddULDLConfigurationCommon>
+                <ReferenceSubcarrierSpacing>1</ReferenceSubcarrierSpacing>
+                <IsPattern2Present>true</IsPattern2Present>
+                <pattern1>
+                  <DlULTransmissionPeriodicity>8</DlULTransmissionPeriodicity>
+                  <NrofDownlinkSlots>3</NrofDownlinkSlots>
+                  <NrofDownlinkSymbols>6</NrofDownlinkSymbols>
+                  <NrofUplinkSlots>2</NrofUplinkSlots>
+                  <NrofUplinkSymbols>4</NrofUplinkSymbols>
+                </pattern1>
+                <pattern2>
+                  <DlULTransmissionPeriodicity>4</DlULTransmissionPeriodicity>
+                  <NrofDownlinkSlots>4</NrofDownlinkSlots>
+                  <NrofDownlinkSymbols>0</NrofDownlinkSymbols>
+                  <NrofUplinkSlots>0</NrofUplinkSlots>
+                  <NrofUplinkSymbols>0</NrofUplinkSymbols>
+                </pattern2>
+              </TddULDLConfigurationCommon>`;
+            
+            // 上傳按鈕點擊事件
+            uploadBtn.addEventListener('click', function() {
+                fileInput.click();
+            });
+            
+            // 檔選擇事件
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        inputText.value = e.target.result;
+                    };
+                    reader.readAsText(file);
+                }
+            });
+            
+            // 拖放功能
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                uploadArea.style.borderColor = '#2a5298';
+                uploadArea.style.backgroundColor = '#f0f5ff';
+            });
+            
+            uploadArea.addEventListener('dragleave', function() {
+                uploadArea.style.borderColor = '#ccc';
+                uploadArea.style.backgroundColor = '#f9f9f9';
+            });
+            
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                uploadArea.style.borderColor = '#ccc';
+                uploadArea.style.backgroundColor = '#f9f9f9';
+                
+                const file = e.dataTransfer.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        inputText.value = e.target.result;
+                    };
+                    reader.readAsText(file);
+                }
+            });
+            
+            // 轉換按鈕點擊事件
+            convertBtn.addEventListener('click', function() {
+                const input = inputText.value;
+                if (!input.trim()) {
+                    alert('請輸入配置內容');
+                    return;
+                }
+                
+                // 調用轉換函數
+                const oaiConfig = convertToOAI(input);
+                outputText.value = oaiConfig;
+            });
+            
+            // 清除按鈕點擊事件
+            clearBtn.addEventListener('click', function() {
+                inputText.value = '';
+                outputText.value = '';
+            });
+            
+            // 複製按鈕點擊事件
+            copyBtn.addEventListener('click', function() {
+                outputText.select();
+                document.execCommand('copy');
+                alert('配置已複製到剪貼板');
+            });
+            
+            // 下載按鈕點擊事件
+            downloadBtn.addEventListener('click', function() {
+                const content = outputText.value;
+                if (!content.trim()) {
+                    alert('沒有內容可下載');
+                    return;
+                }
+                
+                const blob = new Blob([content], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'oai_config.conf';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+            
+            // XML到OAI配置轉換函數
+            function convertToOAI(xmlContent) {
+                // 提取關鍵參數
+                const phyCellId = extractValue(xmlContent, 'PhyCellID') || '186';
+                const freqBand = extractValue(xmlContent, 'FreqBandIndicator') || '78';
+                const ssbPower = extractValue(xmlContent, 'SsPBCHBlockPower') || '-35';
+                const dlBandwidth = extractValue(xmlContent, 'DLBandwidth') || '100';
+                const ulBandwidth = extractValue(xmlContent, 'ULBandwidth') || '100';
+                const nrarfcnDl = extractValue(xmlContent, 'NRARFCNDL') || '647484';
+                const nrarfcnUl = extractValue(xmlContent, 'NRARFCNUL') || '647484';
+                
+                // 提取TDD配置參數
+                const referenceSubcarrierSpacing = extractValue(xmlContent, 'ReferenceSubcarrierSpacing') || '1';
+                const dlUlTransmissionPeriodicity = extractValue(xmlContent, 'DlULTransmissionPeriodicity') || '5';
+                const nrofDownlinkSlots = extractValue(xmlContent, 'NrofDownlinkSlots') || '3';
+                const nrofDownlinkSymbols = extractValue(xmlContent, 'NrofDownlinkSymbols') || '10';
+                const nrofUplinkSlots = extractValue(xmlContent, 'NrofUplinkSlots') || '1';
+                const nrofUplinkSymbols = extractValue(xmlContent, 'NrofUplinkSymbols') || '2';
+                
+                // 提取pattern2參數
+                const dlUlTransmissionPeriodicity2 = extractValueFromPattern(xmlContent, 'pattern2', 'DlULTransmissionPeriodicity') || '5';
+                const nrofDownlinkSlots2 = extractValueFromPattern(xmlContent, 'pattern2', 'NrofDownlinkSlots') || '2';
+                const nrofDownlinkSymbols2 = extractValueFromPattern(xmlContent, 'pattern2', 'NrofDownlinkSymbols') || '10';
+                const nrofUplinkSlots2 = extractValueFromPattern(xmlContent, 'pattern2', 'NrofUplinkSlots') || '2';
+                const nrofUplinkSymbols2 = extractValueFromPattern(xmlContent, 'pattern2', 'NrofUplinkSymbols') || '2';
+                
+                // 提取SSB相關參數
+                const absoluteFrequencyPointA = extractValue(xmlContent, 'AbsoluteFrequencyPointA') || '644208';
+                const ssbPositionsInBurst = extractValue(xmlContent, 'InOneGroup') || '8';
+                const ssbPeriodicityServingCell = extractValue(xmlContent, 'SsbPeriodicityServingCell') || '3';
+                
+                // 計算SSB頻率（基於NRARFCN和頻段）
+                let absoluteFrequencySSB;
+                if (nrarfcnDl === '723324') {
+                    absoluteFrequencySSB = '720288'; // 對應頻段79
+                } else {
+                    absoluteFrequencySSB = '644736'; // 預設值，對應頻段78
+                }
+                
+                // 根據頻段調整其他參數
+                let bandsValue = '[78]';
+                if (freqBand === '79') {
+                    bandsValue = '[79]';
+                }
+                
+                // 生成OAI配置
+                return `Active_gNBs = ( "du-rfsim");
+# Asn1_verbosity, choice in: none, info, annoying
+Asn1_verbosity = "none";
+
+gNBs =
+(
+ {
+    ////////// Identification parameters:
+    gNB_ID = 0xe00;
+    gNB_DU_ID = 0xe00;
+    gNB_name  =  "du-rfsim";
+
+    // Tracking area code, 0x0000 and 0xfffe are reserved values
+    tracking_area_code  =  1;
+    plmn_list = ({ mcc = 001; mnc = 01; mnc_length = 2; snssaiList = ({ sst = 1; }) });
+
+    nr_cellid = 647169L;
+
+    ////////// Physical parameters:
+
+    min_rxtxtime = 6;
+
+    servingCellConfigCommon = (
+    {
+ #spCellConfigCommon
+
+      physCellId                                               = ${phyCellId};
+
+#  downlinkConfigCommon
+    #frequencyInfoDL
+      # this is the SSB frequency
+      absoluteFrequencySSB                                      = ${absoluteFrequencySSB};
+      dl_frequencyBand                                          = ${freqBand};
+      # this is the Point A frequency
+      dl_absoluteFrequencyPointA                                = ${absoluteFrequencyPointA};
+      #scs-SpecificCarrierList
+        dl_offstToCarrier                                       = 0;
+# subcarrierSpacing
+# 0=kHz15, 1=kHz30, 2=kHz60, 3=kHz120
+        dl_subcarrierSpacing                                    = 1;
+        dl_carrierBandwidth                                     = 273;
+     #initialDownlinkBWP
+      #genericParameters
+        # this is RBstart=27,L=48 (275*(L-1))+RBstart
+        initialDLBWPlocationAndBandwidth                         = 1099; # 6366 12925 12956 28875 12952
+# subcarrierSpacing
+# 0=kHz15, 1=kHz30, 2=kHz60, 3=kHz120
+        initialDLBWPsubcarrierSpacing                             = 1;
+      #pdcch-ConfigCommon
+        initialDLBWPcontrolResourceSetZero                        = 10;
+        initialDLBWPsearchSpaceZero                               = 0;
+
+  #uplinkConfigCommon
+     #frequencyInfoUL
+      ul_frequencyBand                                             = ${freqBand};
+      #scs-SpecificCarrierList
+      ul_offstToCarrier                                            = 0;
+# subcarrierSpacing
+# 0=kHz15, 1=kHz30, 2=kHz60, 3=kHz120
+      ul_subcarrierSpacing                                         = 1;
+      ul_carrierBandwidth                                          = 273;
+      pMax                                                         = 23;
+     #initialUplinkBWP
+      #genericParameters
+        initialULBWPlocationAndBandwidth                           = 1099;
+# subcarrierSpacing
+# 0=kHz15, 1=kHz30, 2=kHz60, 3=kHz120
+        initialULBWPsubcarrierSpacing                              = 1;
+      #rach-ConfigCommon
+        #rach-ConfigGeneric
+          prach_ConfigurationIndex                                 = 147;
+#prach_msg1_FDM
+#0 = one, 1=two, 2=four, 3=eight
+          prach_msg1_FDM                                           = 0;
+          prach_msg1_FrequencyStart                                = 2;
+          zeroCorrelationZoneConfig                                = 10;
+          preambleReceivedTargetPower                              = -90;
+#preamblTransMax (0...10) = (3,4,5,6,7,8,10,20,50,100,200)
+          preambleTransMax                                         = 3;
+#powerRampingStep
+# 0=dB0,1=dB2,2=dB4,3=dB6
+        powerRampingStep                                           = 2;
+#ssb_perRACH_OccasionAndCB_PreamblesPerSSB_PR
+#1=oneeighth,2=onefourth,3=half,4=one,5=two,6=four,7=eight,8=sixteen
+        ssb_perRACH_OccasionAndCB_PreamblesPerSSB_PR               = 4;
+#one (0..15) 4,8,12,16,...60,64
+        ssb_perRACH_OccasionAndCB_PreamblesPerSSB                  = 7;
+#ra_ContentionResolutionTimer
+#(0..7) 8,16,24,32,40,48,56,64
+        ra_ContentionResolutionTimer                               = 7;
+        rsrp_ThresholdSSB                                          = 0;
+#prach-RootSequenceIndex_PR
+#1 = 839, 2 = 139
+        prach_RootSequenceIndex_PR                                 = 2;
+        prach_RootSequenceIndex                                    = 1;
+        # SCS for msg1, can only be 15 for 30 kHz < 6 GHz, takes precendence over the one derived from prach-ConfigIndex
+        #
+        msg1_SubcarrierSpacing                                     = 1,
+# restrictedSetConfig
+# 0=unrestricted, 1=restricted type A, 2=restricted type B
+        restrictedSetConfig                                        = 0,
+
+        msg3_DeltaPreamble                                         = 0;
+        p0_NominalWithGrant                                        =-96;
+
+# pucch-ConfigCommon setup :
+# pucchGroupHopping
+# 0 = neither, 1= group hopping, 2=sequence hopping
+        pucchGroupHopping                                          = 0;
+        hoppingId                                                  = 40;
+        p0_nominal                                                 = -96;
+
+      ssb_PositionsInBurst_Bitmap                                  = ${calculateSsbBitmap(ssbPositionsInBurst)};
+
+# ssb_periodicityServingCell
+# 0 = ms5, 1=ms10, 2=ms20, 3=ms40, 4=ms80, 5=ms160, 6=spare2, 7=spare1
+      ssb_periodicityServingCell                                   = ${convertSsbPeriodicity(ssbPeriodicityServingCell)};
+
+# dmrs_TypeA_position
+# 0 = pos2, 1 = pos3
+      dmrs_TypeA_Position                                           = 0;
+
+# subcarrierSpacing
+# 0=kHz15, 1=kHz30, 2=kHz60, 3=kHz120
+      subcarrierSpacing                                            = 1;
+
+  #tdd-UL-DL-ConfigurationCommon
+# subcarrierSpacing
+# 0=kHz15, 1=kHz30, 2=kHz60, 3=kHz120
+      referenceSubcarrierSpacing                                   = ${referenceSubcarrierSpacing};
+
+      # pattern1
+      # dl_UL_TransmissionPeriodicity
+      # 0=ms0p5, 1=ms0p625, 2=ms1, 3=ms1p25, 4=ms2, 5=ms2p5, 6=ms5, 7=ms10
+      # ext: 8=ms3, 9=ms4
+      dl_UL_TransmissionPeriodicity                                = ${convertDlUlPeriodicity(dlUlTransmissionPeriodicity)};
+      nrofDownlinkSlots                                            = ${nrofDownlinkSlots};
+      nrofDownlinkSymbols                                          = ${nrofDownlinkSymbols};
+      nrofUplinkSlots                                              = ${nrofUplinkSlots};
+      nrofUplinkSymbols                                            = ${nrofUplinkSymbols};
+
+      # pattern2
+      pattern2: {
+        dl_UL_TransmissionPeriodicity2                             = ${convertDlUlPeriodicity(dlUlTransmissionPeriodicity2)};
+        nrofDownlinkSlots2                                         = ${nrofDownlinkSlots2};
+        nrofDownlinkSymbols2                                       = ${nrofDownlinkSymbols2};
+        nrofUplinkSlots2                                           = ${nrofUplinkSlots2};
+        nrofUplinkSymbols2                                         = ${nrofUplinkSymbols2};
+      };
+
+      ssPBCH_BlockPower                                            = ${ssbPower};
+     }
+
+  );
+
+    # ------- SCTP definitions
+    SCTP :
+    {
+        # Number of streams to use in input/output
+        SCTP_INSTREAMS  = 2;
+        SCTP_OUTSTREAMS = 2;
+    };
+  }
+);
+
+MACRLCs = ({
+    num_cc              = 1;
+    tr_s_preference     = "local_L1";
+    tr_n_preference     = "f1";
+    local_n_address     = "127.0.0.4";
+    remote_n_address    = "127.0.0.3";
+    local_n_portd       = 2152;
+    remote_n_portd      = 2152;
+    pusch_FailureThres  = 1000;
+});
+
+L1s = ({
+    num_cc = 1;
+    tr_n_preference = "local_mac";
+    prach_dtx_threshold = 200;
+    pucch0_dtx_threshold = 150;
+    ofdm_offset_divisor = 8; #set this to UINT_MAX for offset 0
+});
+
+RUs = ({
+    local_rf       = "yes"
+    nb_tx          = 1
+    nb_rx          = 1
+    att_tx         = 0
+    att_rx         = 0;
+    bands          = ${bandsValue};
+    max_pdschReferenceSignalPower = -27;
+    max_rxgain                    = 114;
+    eNB_instances  = [0];
+    clock_src = "internal";
+});
+
+rfsimulator: {
+  serveraddr = "server";
+  serverport = 4043;
+  options = (); #("saviq"); or/and "chanmod"
+  modelname = "AWGN";
+  IQfile = "/tmp/rfsimulator.iqs"
+}
+
+log_config: {
+  global_log_level = "info";
+  hw_log_level     = "info";
+  nr_phy_log_level = "info";
+  nr_mac_log_level = "info";
+  rlc_log_level    = "info";
+  pdcp_log_level   = "info";
+  rrc_log_level    = "info";
+  f1ap_log_level   = "info";
+  ngap_log_level   = "debug";
+};
+
+e2_agent = {
+  near_ric_ip_addr = "127.0.0.1";
+  sm_dir = "/usr/local/lib/flexric/"
+};`;
+            }
+            
+            // 從XML內容中提取值的輔助函數
+            function extractValue(xmlContent, tagName) {
+                const regex = new RegExp(`<${tagName}>(.*?)</${tagName}>`);
+                const match = xmlContent.match(regex);
+                return match ? match[1] : null;
+            }
+            
+            // 從特定pattern中提取值的輔助函數
+            function extractValueFromPattern(xmlContent, patternName, tagName) {
+                const patternRegex = new RegExp(`<${patternName}>([\\s\\S]*?)</${patternName}>`);
+                const patternMatch = xmlContent.match(patternRegex);
+                if (patternMatch) {
+                    const patternContent = patternMatch[1];
+                    const valueRegex = new RegExp(`<${tagName}>(.*?)</${tagName}>`);
+                    const valueMatch = patternContent.match(valueRegex);
+                    return valueMatch ? valueMatch[1] : null;
+                }
+                return null;
+            }
+            
+            // 計算SSB點陣圖的輔助函數
+            function calculateSsbBitmap(ssbPositions) {
+                const positions = parseInt(ssbPositions);
+                if (positions === 8) return '128'; // 對應8個SSB位置
+                if (positions === 4) return '15';  // 對應4個SSB位置
+                return '128'; // 預設值
+            }
+            
+            // 轉換SSB週期性的輔助函數
+            function convertSsbPeriodicity(periodicity) {
+                const period = parseInt(periodicity);
+                // 0 = ms5, 1=ms10, 2=ms20, 3=ms40, 4=ms80, 5=ms160, 6=spare2, 7=spare1
+                if (period === 3) return '2'; // ms20
+                if (period === 2) return '2'; // ms20
+                return '2'; // 默認ms20
+            }
+            
+            // 轉換DL-UL傳輸週期性的輔助函數
+            function convertDlUlPeriodicity(periodicity) {
+                const period = parseInt(periodicity);
+                // 0=ms0p5, 1=ms0p625, 2=ms1, 3=ms1p25, 4=ms2, 5=ms2p5, 6=ms5, 7=ms10
+                // ext: 8=ms3, 9=ms4
+                if (period === 8) return '8'; // ms3
+                if (period === 4) return '4'; // ms2
+                if (period === 5) return '5'; // ms2.5
+                return '5'; // 默認ms2.5
+            }
+        });
+    </script>
+</body>
+</html>
