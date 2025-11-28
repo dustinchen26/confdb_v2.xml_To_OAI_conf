@@ -3,50 +3,84 @@ online calculator: https://dustinchen26.github.io/confdb_v2.xml_To_OAI_conf
 
 ## Example
 ```
-【Input】Upload or Paste confdb_v2.xml
 confdb_v2_Cedar_n78.xml
 confdb_v2_Sharp_n79.xml
+【Input】Upload or Paste confdb_v2.xml (底下上傳confdb_v2_Sharp_n79.xml)
 ...
-              <NRARFCNDL>647484</NRARFCNDL>
-              <PhyCellID>186</PhyCellID>
-              <NRARFCNUL>647484</NRARFCNUL>
-              <FreqBandIndicator>78</FreqBandIndicator>
-                <AbsoluteFrequencyPointA>644208</AbsoluteFrequencyPointA>
+            <RF>
+              <NRARFCNDL>723324</NRARFCNDL>
+              <PhyCellID>30</PhyCellID>
+              <DLBandwidth>100</DLBandwidth>
+              <ULBandwidth>100</ULBandwidth>
+              <PSCHPowerOffset>db0</PSCHPowerOffset>
+              <NRARFCNUL>723324</NRARFCNUL>
+              <FreqBandIndicator>79</FreqBandIndicator>
+              <SsPBCHBlockPower>-35</SsPBCHBlockPower>
+              <ForgetFactorRbNoise>8</ForgetFactorRbNoise>
+              <SsbFrequency xsi:nil="true"/>
+              <gNBDUId xsi:nil="true"/>
+              <DigitalBeamFormingMode>false</DigitalBeamFormingMode>
+              <AnalogBeamformingMode>false</AnalogBeamformingMode>
+              <BandwidthAutoConfig>false</BandwidthAutoConfig>
+            </RF>
+            <PHY>
+              <FrequencyInfoDLSIB>
+                <OffsetToPointA>5</OffsetToPointA>
+                <MultiFrequencyBandListNRSIB id="1">
+                  <FreqBandIndicatorNR>12</FreqBandIndicatorNR>
+                </MultiFrequencyBandListNRSIB>
+                <ScsSpecificCarrierList id="1">
+                  <SCSSpecificCarrier>
+                    <OffsetToCarrier>0</OffsetToCarrier>
+                    <SubcarrierSpacing>1</SubcarrierSpacing>
+                    <CarrierBandwidth>273</CarrierBandwidth>
+                  </SCSSpecificCarrier>
+                </ScsSpecificCarrierList>
+              </FrequencyInfoDLSIB>
+              <FrequencyInfoULSIB>
+                <AbsoluteFrequencyPointA>720048</AbsoluteFrequencyPointA>
+                <ScsSpecificCarrierList id="1">
+                  <SCSSpecificCarrier>
+                    <OffsetToCarrier>0</OffsetToCarrier>
+                    <SubcarrierSpacing>1</SubcarrierSpacing>
+                    <CarrierBandwidth>273</CarrierBandwidth>
+                  </SCSSpecificCarrier>
+                </ScsSpecificCarrierList>
+                <IsPMaxPresent>true</IsPMaxPresent>
+                <Pmax>23</Pmax>
+              </FrequencyInfoULSIB>
+              <SSB>
+                <SsbPositionsInBurst>
+                  <InOneGroup>8</InOneGroup>
+                </SsbPositionsInBurst>
+                <SsbPeriodicityServingCell>3</SsbPeriodicityServingCell>
+                <SsPBCHBlockPower>-36</SsPBCHBlockPower>
+                <SsbSubcarrierOffset>9</SsbSubcarrierOffset>
+              </SSB>
+              <SubCarrierSpacingCommon>scs30or120</SubCarrierSpacingCommon>
               <TddULDLConfigurationCommon>
                 <ReferenceSubcarrierSpacing>1</ReferenceSubcarrierSpacing>
                 <IsPattern2Present>true</IsPattern2Present>
                 <pattern1>
-                  <DlULTransmissionPeriodicity>5</DlULTransmissionPeriodicity>
+                  <DlULTransmissionPeriodicity>8</DlULTransmissionPeriodicity>
                   <NrofDownlinkSlots>3</NrofDownlinkSlots>
-                  <NrofDownlinkSymbols>10</NrofDownlinkSymbols>
-                  <NrofUplinkSlots>1</NrofUplinkSlots>
-                  <NrofUplinkSymbols>2</NrofUplinkSymbols>
+                  <NrofDownlinkSymbols>6</NrofDownlinkSymbols>
+                  <NrofUplinkSlots>2</NrofUplinkSlots>
+                  <NrofUplinkSymbols>4</NrofUplinkSymbols>
                 </pattern1>
                 <pattern2>
-                  <DlULTransmissionPeriodicity>5</DlULTransmissionPeriodicity>
-                  <NrofDownlinkSlots>2</NrofDownlinkSlots>
-                  <NrofDownlinkSymbols>10</NrofDownlinkSymbols>
-                  <NrofUplinkSlots>2</NrofUplinkSlots>
-                  <NrofUplinkSymbols>2</NrofUplinkSymbols>
+                  <DlULTransmissionPeriodicity>4</DlULTransmissionPeriodicity>
+                  <NrofDownlinkSlots>4</NrofDownlinkSlots>
+                  <NrofDownlinkSymbols>0</NrofDownlinkSymbols>
+                  <NrofUplinkSlots>0</NrofUplinkSlots>
+                  <NrofUplinkSymbols>0</NrofUplinkSymbols>
                 </pattern2>
-                    <AggregationLevel4>4</AggregationLevel4>
-                    <AggregationLevel8>2</AggregationLevel8>
-                    <AggregationLevel16>1</AggregationLevel16>
-                    <SrPeriod>20</SrPeriod>
-                    <LayerOneEntryMcs>7</LayerOneEntryMcs>
-                    <LayerOneLeaveMcs>17</LayerOneLeaveMcs>
-                    <LayerTwoEntryMcs>10</LayerTwoEntryMcs>
-                    <LayerTwoLeaveMcs>9</LayerTwoLeaveMcs>
-                  <AbsoluteFrequencySSB>644736</AbsoluteFrequencySSB>
-                <PdcchConfigSIB1>160</PdcchConfigSIB1>
-                      <ControlResourceSetZero>10</ControlResourceSetZero>
-                    <PreambleTransMax>3</PreambleTransMax>
-                    <PrachConfigurationIndex>147</PrachConfigurationIndex>
-                    <P0NominalWithGrant>-96</P0NominalWithGrant>
-                    <Msg3Alpha>alpha0</Msg3Alpha>
-            <UeInactiveTimer>30</UeInactiveTimer>
 			
 【Output】OAI conf
+# OAI配置文件 - 文件2配置
+# 生成時間: 2025-11-28T00:04:34.190Z
+# 源參數: NRARFCNDL=723324, PhyCellID=30, 頻段=79
+
 Active_gNBs = ( "du-rfsim");
 # Asn1_verbosity, choice in: none, info, annoying
 Asn1_verbosity = "none";
@@ -73,15 +107,15 @@ gNBs =
     {
  #spCellConfigCommon
 
-      physCellId                                               = 186;
+      physCellId                                               = 30;
 
 #  downlinkConfigCommon
     #frequencyInfoDL
       # this is the SSB frequency
-      absoluteFrequencySSB                                      = 644736;
-      dl_frequencyBand                                          = 78;
+      absoluteFrequencySSB                                      = 720288;
+      dl_frequencyBand                                          = 79;
       # this is the Point A frequency
-      dl_absoluteFrequencyPointA                                = 644208;
+      dl_absoluteFrequencyPointA                                = 720048;
       #scs-SpecificCarrierList
         dl_offstToCarrier                                       = 0;
 # subcarrierSpacing
@@ -91,17 +125,17 @@ gNBs =
      #initialDownlinkBWP
       #genericParameters
         # this is RBstart=27,L=48 (275*(L-1))+RBstart
-        initialDLBWPlocationAndBandwidth                         = 1099; # 6366 12925 12956 28875 12952
+        initialDLBWPlocationAndBandwidth                         = 1099;
 # subcarrierSpacing
 # 0=kHz15, 1=kHz30, 2=kHz60, 3=kHz120
         initialDLBWPsubcarrierSpacing                             = 1;
       #pdcch-ConfigCommon
-        initialDLBWPcontrolResourceSetZero                        = 10;
+        initialDLBWPcontrolResourceSetZero                        = 4;
         initialDLBWPsearchSpaceZero                               = 0;
 
   #uplinkConfigCommon
      #frequencyInfoUL
-      ul_frequencyBand                                             = 78;
+      ul_frequencyBand                                             = 79;
       #scs-SpecificCarrierList
       ul_offstToCarrier                                            = 0;
 # subcarrierSpacing
@@ -117,7 +151,7 @@ gNBs =
         initialULBWPsubcarrierSpacing                              = 1;
       #rach-ConfigCommon
         #rach-ConfigGeneric
-          prach_ConfigurationIndex                                 = 147;
+          prach_ConfigurationIndex                                 = 198;
 #prach_msg1_FDM
 #0 = one, 1=two, 2=four, 3=eight
           prach_msg1_FDM                                           = 0;
@@ -125,7 +159,7 @@ gNBs =
           zeroCorrelationZoneConfig                                = 10;
           preambleReceivedTargetPower                              = -90;
 #preamblTransMax (0...10) = (3,4,5,6,7,8,10,20,50,100,200)
-          preambleTransMax                                         = 3;
+          preambleTransMax                                         = 7;
 #powerRampingStep
 # 0=dB0,1=dB2,2=dB4,3=dB6
         powerRampingStep                                           = 2;
@@ -150,7 +184,8 @@ gNBs =
         restrictedSetConfig                                        = 0,
 
         msg3_DeltaPreamble                                         = 0;
-        p0_NominalWithGrant                                        =-96;
+        p0_NominalWithGrant                                        = -78;
+        #msg3_Alpha                                                 = alpha1;
 
 # pucch-ConfigCommon setup :
 # pucchGroupHopping
@@ -182,19 +217,19 @@ gNBs =
       # dl_UL_TransmissionPeriodicity
       # 0=ms0p5, 1=ms0p625, 2=ms1, 3=ms1p25, 4=ms2, 5=ms2p5, 6=ms5, 7=ms10
       # ext: 8=ms3, 9=ms4
-      dl_UL_TransmissionPeriodicity                                = 5;
+      dl_UL_TransmissionPeriodicity                                = 8;
       nrofDownlinkSlots                                            = 3;
-      nrofDownlinkSymbols                                          = 10;
-      nrofUplinkSlots                                              = 1;
-      nrofUplinkSymbols                                            = 2;
+      nrofDownlinkSymbols                                          = 6;
+      nrofUplinkSlots                                              = 2;
+      nrofUplinkSymbols                                            = 4;
 
       # pattern2
       pattern2: {
-        dl_UL_TransmissionPeriodicity2                             = 5;
-        nrofDownlinkSlots2                                         = 2;
-        nrofDownlinkSymbols2                                       = 10;
-        nrofUplinkSlots2                                           = 2;
-        nrofUplinkSymbols2                                         = 2;
+        dl_UL_TransmissionPeriodicity2                             = 4;
+        nrofDownlinkSlots2                                         = 4;
+        nrofDownlinkSymbols2                                       = 0;
+        nrofUplinkSlots2                                           = 0;
+        nrofUplinkSymbols2                                         = 0;
       };
 
       ssPBCH_BlockPower                                            = -35;
@@ -221,6 +256,18 @@ MACRLCs = ({
     local_n_portd       = 2152;
     remote_n_portd      = 2152;
     pusch_FailureThres  = 1000;
+    
+    # MAC層參數
+    sr_Period           = 40;
+    layerOne_EntryMcs   = 11;
+    layerOne_LeaveMcs   = 24;
+    layerTwo_EntryMcs   = 14;
+    layerTwo_LeaveMcs   = 13;
+    
+    # 聚合級別配置
+    aggregation_Level4  = 2;
+    aggregation_Level8  = 1;
+    aggregation_Level16 = 0;
 });
 
 L1s = ({
@@ -237,7 +284,7 @@ RUs = ({
     nb_rx          = 1
     att_tx         = 0
     att_rx         = 0;
-    bands          = [78];
+    bands          = [79];
     max_pdschReferenceSignalPower = -27;
     max_rxgain                    = 114;
     eNB_instances  = [0];
@@ -258,10 +305,15 @@ log_config: {
   nr_phy_log_level = "info";
   nr_mac_log_level = "info";
   rlc_log_level    = "info";
-  pdcp_log_level   = "info";
+  pdcch_log_level  = "info";
   rrc_log_level    = "info";
   f1ap_log_level   = "info";
   ngap_log_level   = "debug";
+};
+
+# 定時器配置
+timer_config: {
+  ue_inactive_timer = 300;
 };
 
 e2_agent = {
